@@ -1,13 +1,22 @@
 import requests
 import json
 import configparser
+import sqlite3
 
 from flask import Flask, render_template, request
+from flask_caching import Cache
 
+
+cache = Cache(config={'CACHE_TYPE': 'simple'})
 app = Flask(__name__)
+cache.init_app(app)
+
+conn = sqlite3.connect('database.db')
+c = conn.cursor()
 
 
 @app.route('/')
+@cache.cached(timeout=300)
 def weather_dashboard():
     with open('countries.json', 'r') as countries:
         datas = json.load(countries)
@@ -43,9 +52,6 @@ def City(city):
                            feels_like=feels_like, weather=weather)
 
 
-
-
-
 def get_api_key():
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -53,11 +59,13 @@ def get_api_key():
 
 
 def get_weather(city_name, api_key):
-
     api_url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&units=metric&appid={api_key}&mode=json&units=metric"
     request_q = requests.get(api_url)
     return request_q.json()
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
+
+#  TODO 1 caching cities
+#       2 view

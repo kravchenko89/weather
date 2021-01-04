@@ -18,18 +18,17 @@
         <th>Country</th>
         <th>City</th>
           </tr>
+        {% for county in datas %}
+        {% for cities in datas[county] %}
 
-          {% for i in datas %}
-        {% for city in datas[i] %}
 
         <tr>
-            <td width="5">{{i}}</td>
-            <td width="5"><a href="{{ url_for( 'City', city=city) }}">{{city}}</a></td>
+            <td width="5">{{county}}</td>
+            <td width="5"><a href="{{ url_for( 'City', city=cities) }}">{{cities}}</a></td>
 
       </tr>
         {% endfor %}
         {% endfor %}
-
             </table>
 </body>
 </html>
