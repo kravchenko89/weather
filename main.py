@@ -1,5 +1,4 @@
 import requests
-import json
 import configparser
 import sqlite3
 
@@ -7,20 +6,24 @@ from flask import Flask, render_template, request
 from flask_caching import Cache
 
 
-cache = Cache(config={'CACHE_TYPE': 'simple'})
 app = Flask(__name__)
+
+cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
 
-conn = sqlite3.connect('database.db')
-c = conn.cursor()
+conn = sqlite3.connect('database.sql', check_same_thread=False)
+cur = conn.cursor()
 
 
 @app.route('/')
-@cache.cached(timeout=300)
+# @cache.cached(timeout=300)
 def weather_dashboard():
-    with open('countries.json', 'r') as countries:
-        datas = json.load(countries)
-    return render_template('home.html', datas=datas)
+    db_list = []
+    open('database.sql', encoding='latin1')
+    for datas in cur.execute("SELECT * FROM cities ORDER BY count"):
+        db_list.append(datas)
+
+    return render_template('home.html', datas=db_list)
 
 
 @app.route('/results', methods=['POST'])
@@ -39,15 +42,14 @@ def render_results():
 
 
 @app.route('/resultss/<city>/', methods=['GET'])
-def City(city):
-    # import pdb
-    # pdb.set_trace()
+def render_press(city):
     api_key = get_api_key()
     data = get_weather(city, api_key)
     temp = f"{float(data['main']['temp'])}"
     feels_like = '{0:.2f}'.format(data['main']['feels_like'])
     weather = data['weather'][0]['main']
     location = data['name']
+
     return render_template('results.html', location=location, temp=temp,
                            feels_like=feels_like, weather=weather)
 

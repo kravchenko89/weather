@@ -15,11 +15,4 @@ with open('countries.json', 'r') as countries:
 
         conn.commit()
 
-# conn.close()
-cn.execute("SELECT Cities FROM city;")
-rows = cn.fetchall()
-for row in rows:
-    print(row)
-
-# conn.commit()
-# conn.close()
+conn.close()
