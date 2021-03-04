@@ -18,12 +18,12 @@
         <th>Country</th>
         <th>City</th>
           </tr>
-        {% for county in datas %}
+        {% for county in data %}
 
 
         <tr>
             <td width="5">{{county[0]}}</td>
-            <td width="5"><a href="{{ url_for( 'City', city=county[1]) }}">{{county[1]}}</a></td>
+            <td width="5"><a href="{{ url_for( 'render_press', city=county[1]) }}">{{county[1]}}</a></td>
 
       </tr>
         {% endfor %}
